@@ -221,7 +221,7 @@ export function UsersManager() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <Table>
+        <Table className="max-md:table-fixed">
           <TableHeader>
             <TableRow>
               <TableHead>Email</TableHead>
@@ -230,7 +230,7 @@ export function UsersManager() {
               <TableHead className="hidden md:table-cell">
                 Lần đăng nhập cuối
               </TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+              <TableHead className="w-[4.75rem] text-right md:w-auto">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -264,7 +264,7 @@ export function UsersManager() {
             ) : (
               users.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="max-w-[9rem] truncate font-medium md:max-w-none">
+                  <TableCell className="max-w-0 truncate font-medium md:max-w-none">
                     {user.email}
                   </TableCell>
                   <TableCell>{roleLabel(user.role)}</TableCell>
@@ -275,7 +275,7 @@ export function UsersManager() {
                     {formatDateTime(user.lastSignInAt)}
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-0.5 md:gap-1">
+                    <div className="flex flex-wrap justify-end gap-0 md:flex-nowrap md:gap-1">
                       <Button
                         type="button"
                         variant="ghost"

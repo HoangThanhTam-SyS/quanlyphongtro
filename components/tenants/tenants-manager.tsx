@@ -1325,7 +1325,7 @@ export function TenantsManager() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <Table>
+        <Table className="max-md:table-fixed">
           <TableHeader>
             <TableRow>
               {isAdmin ? (
@@ -1339,7 +1339,7 @@ export function TenantsManager() {
                   />
                 </TableHead>
               ) : null}
-              <TableHead>Tên khách</TableHead>
+              <TableHead className="w-[34%] md:w-auto">Tên khách</TableHead>
               <TableHead className="hidden md:table-cell">SĐT</TableHead>
               <TableHead className="hidden md:table-cell">CCCD</TableHead>
               <TableHead>Số phòng</TableHead>
@@ -1347,7 +1347,7 @@ export function TenantsManager() {
               <TableHead className="hidden md:table-cell">Ngày rời đi</TableHead>
               <TableHead className="hidden md:table-cell">Tiền cọc</TableHead>
               <TableHead>Trạng thái</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+              <TableHead className="w-[4.5rem] text-right md:w-auto">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -1409,7 +1409,7 @@ export function TenantsManager() {
                       />
                     </TableCell>
                   ) : null}
-                  <TableCell className="max-w-[7rem] truncate font-medium md:max-w-none">
+                  <TableCell className="max-w-0 truncate font-medium md:max-w-none">
                     {tenant.name}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{tenant.phone}</TableCell>
@@ -1425,14 +1425,14 @@ export function TenantsManager() {
                     {formatMoney(tenant.deposit)}
                   </TableCell>
                   <TableCell>
-                    <Badge className={tenantStatusClassName(tenant.status)}>
+                    <Badge className={`${tenantStatusClassName(tenant.status)} max-md:px-1`}>
                       {isTenantStatus(tenant.status)
                         ? tenantStatusLabel(tenant.status)
                         : tenant.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-0.5 md:gap-1">
+                    <div className="flex flex-wrap justify-end gap-0 md:flex-nowrap md:gap-1">
                       {tenant.status === "đang ở" ? (
                         <Button
                           type="button"

@@ -712,7 +712,7 @@ export function RoomsManager() {
       ) : null}
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <Table>
+        <Table className="max-md:table-fixed">
           <TableHeader>
             <TableRow>
               {isAdmin ? (
@@ -729,10 +729,12 @@ export function RoomsManager() {
               <TableHead>Số phòng</TableHead>
               <TableHead className="hidden md:table-cell">Tầng</TableHead>
               <TableHead className="hidden md:table-cell">Diện tích</TableHead>
-              <TableHead>Giá thuê</TableHead>
+              <TableHead className="w-[34%] md:w-auto">Giá thuê</TableHead>
               <TableHead>Trạng thái</TableHead>
               {showRoomActions ? (
-                <TableHead className="text-right">Thao tác</TableHead>
+                <TableHead className="w-[4.25rem] text-right md:w-auto">
+                  Thao tác
+                </TableHead>
               ) : null}
             </TableRow>
           </TableHeader>
@@ -788,7 +790,7 @@ export function RoomsManager() {
                   </TableCell>
                   <TableCell>{formatPrice(room.price)}</TableCell>
                   <TableCell>
-                    <Badge className={statusClassName(room.status)}>
+                    <Badge className={`${statusClassName(room.status)} max-md:px-1`}>
                       {isRoomStatus(room.status)
                         ? statusLabel[room.status]
                         : room.status}
