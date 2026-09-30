@@ -153,13 +153,23 @@ function BrandMark({ logoUrl }: { logoUrl: string }) {
   )
 }
 
-function BrandTitle({ logoUrl }: { logoUrl: string }) {
+function BrandTitle({
+  logoUrl,
+  hostelName,
+}: {
+  logoUrl: string
+  hostelName: string
+}) {
   return (
     <div className="flex min-w-0 flex-row items-center gap-3">
       <BrandMark logoUrl={logoUrl} />
-      <div className="flex h-14 min-w-0 flex-col justify-center">
-        <p className="truncate text-lg leading-8 font-bold">Quản lý phòng trọ</p>
-        <p className="truncate text-sm leading-6 text-white/80">HOÀNG THÀNH TÂM</p>
+      <div className="flex h-14 w-fit max-w-full min-w-0 flex-col items-center justify-center">
+        <p className="max-w-full truncate text-lg leading-8 font-bold">
+          Quản lý phòng trọ
+        </p>
+        <p className="w-full truncate text-center text-sm leading-6 text-white/80">
+          {hostelName}
+        </p>
       </div>
     </div>
   )
@@ -168,7 +178,7 @@ function BrandTitle({ logoUrl }: { logoUrl: string }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { role } = useUserRole()
-  const [hostelName, setHostelName] = useState("Hệ thống quản lý")
+  const [hostelName, setHostelName] = useState("Tên nhà trọ")
   const [logoUrl, setLogoUrl] = useState("")
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -185,7 +195,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       if (!cancelled && !error) {
         const name =
           typeof data?.hostel_name === "string" ? data.hostel_name.trim() : ""
-        setHostelName(name || "Hệ thống quản lý")
+        setHostelName(name || "Tên nhà trọ")
       }
 
       const logo = await supabase
@@ -216,7 +226,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-svh bg-background">
       <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="bg-primary py-4 pl-3 pr-2 text-primary-foreground">
-          <BrandTitle logoUrl={logoUrl} />
+          <BrandTitle hostelName={hostelName} logoUrl={logoUrl} />
         </div>
         <NavLinks className="flex-col px-3" role={role} />
         <SidebarAccount />
@@ -241,7 +251,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="w-72 max-w-[85vw] gap-0 bg-sidebar p-0 text-sidebar-foreground"
             >
               <SheetHeader className="border-b border-primary-foreground/20 bg-primary text-primary-foreground">
-                <BrandTitle logoUrl={logoUrl} />
+                <BrandTitle hostelName={hostelName} logoUrl={logoUrl} />
                 <SheetTitle className="sr-only">Quản lý phòng trọ</SheetTitle>
                 <SheetDescription className="sr-only">
                   {hostelName}
@@ -256,7 +266,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <SidebarAccount />
             </SheetContent>
           </Sheet>
-          <BrandTitle logoUrl={logoUrl} />
+          <BrandTitle hostelName={hostelName} logoUrl={logoUrl} />
         </header>
         <main className="w-full flex-1 overflow-x-hidden p-2 md:p-6">
           {children}
