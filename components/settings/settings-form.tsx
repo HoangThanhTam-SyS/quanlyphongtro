@@ -26,6 +26,7 @@ import { createSupabaseClient } from "@/utils/supabase/client"
 
 type SettingsFormState = {
   hostelName: string
+  logoUrl: string
   bankCode: string
   bankAccount: string
   bankOwner: string
@@ -43,12 +44,50 @@ type SupabaseErrorLike = {
 
 const emptyForm: SettingsFormState = {
   hostelName: "",
+  logoUrl: "",
   bankCode: "",
   bankAccount: "",
   bankOwner: "",
   electricPrice: "",
   waterPrice: "",
   servicePrice: "",
+}
+
+function readLogoFile(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("Chỉ chọn file ảnh cho logo."))
+      return
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      reject(new Error("Ảnh logo cần nhỏ hơn 8MB."))
+      return
+    }
+
+    const objectUrl = URL.createObjectURL(file)
+    const image = new Image()
+    image.onload = () => {
+      const maxSize = 128
+      const scale = Math.min(1, maxSize / Math.max(image.width, image.height))
+      const canvas = document.createElement("canvas")
+      canvas.width = Math.max(1, Math.round(image.width * scale))
+      canvas.height = Math.max(1, Math.round(image.height * scale))
+      const context = canvas.getContext("2d")
+      if (!context) {
+        URL.revokeObjectURL(objectUrl)
+        reject(new Error("Không đọc được ảnh logo."))
+        return
+      }
+      context.drawImage(image, 0, 0, canvas.width, canvas.height)
+      URL.revokeObjectURL(objectUrl)
+      resolve(canvas.toDataURL("image/png"))
+    }
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl)
+      reject(new Error("Không đọc được ảnh logo."))
+    }
+    image.src = objectUrl
+  })
 }
 
 function toBankOwner(value: string) {
@@ -83,6 +122,8 @@ export function SettingsForm() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [logoColumnMissing, setLogoColumnMissing] = useState(false)
+  const [canSaveLogo, setCanSaveLogo] = useState(false)
 
   const loadSettings = useCallback(async () => {
     setLoading(true)
@@ -136,8 +177,21 @@ export function SettingsForm() {
         return
       }
 
+      const logoResult = await supabase
+        .from("settings")
+        .select("logo_url")
+        .eq("id", 1)
+        .maybeSingle()
+      const logoMissing =
+        Boolean(logoResult.error) &&
+        (logoResult.error?.code === "PGRST204" ||
+          /logo_url/i.test(logoResult.error?.message ?? ""))
+      setLogoColumnMissing(logoMissing)
+      setCanSaveLogo(!logoResult.error)
+
       setForm({
         hostelName: textValue(data.hostel_name),
+        logoUrl: logoResult.error ? "" : textValue(logoResult.data?.logo_url),
         bankCode: normalizeBankCode(data.bank_code),
         bankAccount: textValue(data.bank_account).replace(/[^0-9]/g, ""),
         bankOwner: textValue(data.bank_owner),
@@ -203,13 +257,25 @@ export function SettingsForm() {
           electric_price: electricPrice,
           water_price: waterPrice,
           service_price: servicePrice,
+          ...(canSaveLogo ? { logo_url: form.logoUrl || null } : {}),
         })
         .eq("id", 1)
         .select(
-          "id, hostel_name, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
+          canSaveLogo
+            ? "id, hostel_name, logo_url, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
+            : "id, hostel_name, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
         )
 
       if (error) {
+        const missingLogo =
+          error.code === "PGRST204" || /logo_url/i.test(error.message ?? "")
+        if (missingLogo) {
+          setLogoColumnMissing(true)
+          setError(
+            "Bảng settings chưa có cột logo_url. Hãy thêm cột text logo_url để lưu logo."
+          )
+          return
+        }
         console.log(error)
         setError(
           error.message || "Không lưu được cấu hình. Vui lòng thử lại."
@@ -228,6 +294,7 @@ export function SettingsForm() {
 
       setForm({
         hostelName: textValue(saved.hostel_name),
+        logoUrl: canSaveLogo ? textValue(saved.logo_url) : form.logoUrl,
         bankCode: normalizeBankCode(saved.bank_code),
         bankAccount: textValue(saved.bank_account).replace(/[^0-9]/g, ""),
         bankOwner: textValue(saved.bank_owner),
@@ -235,7 +302,13 @@ export function SettingsForm() {
         waterPrice: toInputValue(saved.water_price),
         servicePrice: toInputValue(saved.service_price),
       })
-      setSuccess("Đã lưu cấu hình.")
+      if (logoColumnMissing && form.logoUrl) {
+        setError(
+          "Đã lưu các mục khác. Logo chưa lưu được vì bảng settings chưa có cột logo_url."
+        )
+      } else {
+        setSuccess("Đã lưu cấu hình.")
+      }
       window.dispatchEvent(new Event("settingsUpdated"))
     } catch (saveError) {
       console.log(saveError)
@@ -282,6 +355,62 @@ export function SettingsForm() {
                   }))
                 }
               />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="logo">Logo</Label>
+              {form.logoUrl ? (
+                <img
+                  src={form.logoUrl}
+                  alt="Logo nhà trọ"
+                  className="h-8 w-8 rounded object-contain"
+                />
+              ) : null}
+              <Input
+                id="logo"
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                disabled={loading || saving || !isAdmin}
+                onChange={(event) => {
+                  const file = event.target.files?.[0]
+                  if (!file) return
+                  void readLogoFile(file)
+                    .then((logoUrl) => {
+                      setError(null)
+                      setForm((current) => ({ ...current, logoUrl }))
+                    })
+                    .catch((readError: unknown) => {
+                      setError(
+                        readError instanceof Error
+                          ? readError.message
+                          : "Không đọc được ảnh logo."
+                      )
+                    })
+                }}
+              />
+              {form.logoUrl ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-fit"
+                  disabled={loading || saving || !isAdmin}
+                  onClick={() =>
+                    setForm((current) => ({ ...current, logoUrl: "" }))
+                  }
+                >
+                  Gỡ logo
+                </Button>
+              ) : null}
+              <p className="text-xs text-muted-foreground">
+                Ảnh được thu nhỏ rồi lưu vào cấu hình.
+              </p>
+              {logoColumnMissing ? (
+                <p className="text-sm text-destructive" role="alert">
+                  Bảng settings chưa có cột logo_url. Hãy thêm cột text logo_url
+                  để lưu logo.
+                </p>
+              ) : null}
             </div>
 
             <div className="grid gap-2">

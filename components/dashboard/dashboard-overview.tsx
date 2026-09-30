@@ -77,6 +77,11 @@ function describeSupabaseError(error: SupabaseErrorLike) {
 const dashboardCardClassName = "overflow-hidden gap-0 pt-0"
 const dashboardCardHeaderClassName = "border-b bg-[#d3ddf3] pt-3 pb-3!"
 const dashboardCardContentClassName = "bg-card pt-4"
+const statCardClassName = `${dashboardCardClassName} pb-0`
+const statCardHeaderClassName =
+  "border-b bg-[#d3ddf3] px-3! pt-3! pb-2! md:px-6! md:pt-6! md:pb-4!"
+const statCardContentClassName =
+  "bg-card px-3! pt-2! pb-3! md:px-6! md:pt-4! md:pb-6!"
 
 const statCards = [
   {
@@ -119,12 +124,12 @@ const statCards = [
 
 function StatSkeleton() {
   return (
-    <Card className={dashboardCardClassName}>
-      <CardHeader className={dashboardCardHeaderClassName}>
-        <div className="h-4 w-24 animate-pulse rounded bg-white/70" />
+    <Card className={statCardClassName}>
+      <CardHeader className={statCardHeaderClassName}>
+        <div className="h-3 w-20 animate-pulse rounded bg-white/70 md:h-4 md:w-24" />
       </CardHeader>
-      <CardContent className={dashboardCardContentClassName}>
-        <div className="h-8 w-20 animate-pulse rounded bg-muted" />
+      <CardContent className={statCardContentClassName}>
+        <div className="h-6 w-16 animate-pulse rounded bg-muted md:h-8 md:w-20" />
       </CardContent>
     </Card>
   )
@@ -245,17 +250,19 @@ export function DashboardOverview() {
                 const Icon = item.icon
                 const value = stats[item.key]
                 return (
-                  <Card key={item.key} className={dashboardCardClassName}>
-                    <CardHeader className={dashboardCardHeaderClassName}>
-                      <CardTitle className="text-slate-900">{item.label}</CardTitle>
+                  <Card key={item.key} className={statCardClassName}>
+                    <CardHeader className={statCardHeaderClassName}>
+                      <CardTitle className="text-xs text-slate-900 md:text-sm">
+                        {item.label}
+                      </CardTitle>
                       <CardAction>
-                        <span className="flex size-8 items-center justify-center rounded-lg bg-white/80 text-primary">
-                          <Icon className="size-4" />
+                        <span className="flex size-6 items-center justify-center rounded-lg bg-white/80 text-primary md:size-8">
+                          <Icon className="h-4 w-4 md:h-5 md:w-5" />
                         </span>
                       </CardAction>
                     </CardHeader>
-                    <CardContent className={dashboardCardContentClassName}>
-                      <p className="text-2xl font-semibold tracking-tight">
+                    <CardContent className={statCardContentClassName}>
+                      <p className="text-xl font-bold tracking-tight md:text-3xl">
                         {item.money ? formatMoney(value) : value}
                       </p>
                     </CardContent>
