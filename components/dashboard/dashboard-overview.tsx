@@ -252,7 +252,7 @@ export function DashboardOverview() {
                 return (
                   <Card key={item.key} className={statCardClassName}>
                     <CardHeader className={statCardHeaderClassName}>
-                      <CardTitle className="text-xs text-slate-900 md:text-sm">
+                      <CardTitle className="text-base text-slate-900 md:text-sm">
                         {item.label}
                       </CardTitle>
                       <CardAction>

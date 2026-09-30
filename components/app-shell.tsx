@@ -141,33 +141,25 @@ function BrandMark({ logoUrl }: { logoUrl: string }) {
       <img
         src={logoUrl}
         alt=""
-        className="h-8 w-8 rounded object-contain"
+        className="-my-1 h-16 w-auto shrink-0 rounded object-contain"
       />
     )
   }
 
   return (
-    <span className="flex size-8 items-center justify-center rounded-lg bg-primary-foreground/15 text-primary-foreground">
-      <Building2 className="size-4" />
+    <span className="-my-1 flex h-16 w-14 shrink-0 items-center justify-center rounded-lg bg-primary-foreground/15 text-primary-foreground">
+      <Building2 className="size-14" />
     </span>
   )
 }
 
-function BrandTitle({
-  hostelName,
-  logoUrl,
-}: {
-  hostelName: string
-  logoUrl: string
-}) {
+function BrandTitle({ logoUrl }: { logoUrl: string }) {
   return (
-    <div className="flex min-w-0 items-center gap-2.5">
+    <div className="flex min-w-0 flex-row items-center gap-3">
       <BrandMark logoUrl={logoUrl} />
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold tracking-tight">
-          Quản lý phòng trọ
-        </p>
-        <p className="truncate text-xs text-primary-foreground/80">{hostelName}</p>
+      <div className="flex h-14 min-w-0 flex-col justify-center">
+        <p className="truncate text-lg leading-8 font-bold">Quản lý phòng trọ</p>
+        <p className="truncate text-sm leading-6 text-white/80">HOÀNG THÀNH TÂM</p>
       </div>
     </div>
   )
@@ -223,8 +215,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-svh bg-background">
       <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
-        <div className="bg-primary px-5 py-5 text-primary-foreground">
-          <BrandTitle hostelName={hostelName} logoUrl={logoUrl} />
+        <div className="bg-primary py-4 pl-3 pr-2 text-primary-foreground">
+          <BrandTitle logoUrl={logoUrl} />
         </div>
         <NavLinks className="flex-col px-3" role={role} />
         <SidebarAccount />
@@ -249,7 +241,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="w-72 max-w-[85vw] gap-0 bg-sidebar p-0 text-sidebar-foreground"
             >
               <SheetHeader className="border-b border-primary-foreground/20 bg-primary text-primary-foreground">
-                <BrandTitle hostelName={hostelName} logoUrl={logoUrl} />
+                <BrandTitle logoUrl={logoUrl} />
                 <SheetTitle className="sr-only">Quản lý phòng trọ</SheetTitle>
                 <SheetDescription className="sr-only">
                   {hostelName}
@@ -264,7 +256,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <SidebarAccount />
             </SheetContent>
           </Sheet>
-          <BrandTitle hostelName={hostelName} logoUrl={logoUrl} />
+          <BrandTitle logoUrl={logoUrl} />
         </header>
         <main className="w-full flex-1 overflow-x-hidden p-2 md:p-6">
           {children}
