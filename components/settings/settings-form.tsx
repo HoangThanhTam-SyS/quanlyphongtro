@@ -103,8 +103,19 @@ function textValue(value: unknown) {
   return typeof value === "string" ? value : ""
 }
 
-function toInputValue(value: number | string | null) {
-  if (value === null) return ""
+type SettingsRow = {
+  hostel_name: unknown
+  logo_url?: unknown
+  bank_code: unknown
+  bank_account: unknown
+  bank_owner: unknown
+  electric_price: unknown
+  water_price: unknown
+  service_price: unknown
+}
+
+function toInputValue(value: unknown) {
+  if (typeof value !== "number" && typeof value !== "string") return ""
   const number = typeof value === "number" ? value : Number(value)
   return Number.isFinite(number) ? formatMoneyInput(number) : ""
 }
@@ -247,24 +258,35 @@ export function SettingsForm() {
 
     try {
       const supabase = createSupabaseClient()
-      const { data, error } = await supabase
-        .from("settings")
-        .update({
-          hostel_name: hostelName,
-          bank_code: bankCode,
-          bank_account: bankAccount,
-          bank_owner: bankOwner,
-          electric_price: electricPrice,
-          water_price: waterPrice,
-          service_price: servicePrice,
-          ...(canSaveLogo ? { logo_url: form.logoUrl || null } : {}),
-        })
-        .eq("id", 1)
-        .select(
-          canSaveLogo
-            ? "id, hostel_name, logo_url, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
-            : "id, hostel_name, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
-        )
+      const settingsUpdate = {
+        hostel_name: hostelName,
+        bank_code: bankCode,
+        bank_account: bankAccount,
+        bank_owner: bankOwner,
+        electric_price: electricPrice,
+        water_price: waterPrice,
+        service_price: servicePrice,
+      }
+      const result = canSaveLogo
+        ? await supabase
+            .from("settings")
+            .update({
+              ...settingsUpdate,
+              logo_url: form.logoUrl || null,
+            })
+            .eq("id", 1)
+            .select(
+              "id, hostel_name, logo_url, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
+            )
+        : await supabase
+            .from("settings")
+            .update(settingsUpdate)
+            .eq("id", 1)
+            .select(
+              "id, hostel_name, bank_code, bank_account, bank_owner, electric_price, water_price, service_price"
+            )
+      const { data, error } = result
+      const saved: SettingsRow | undefined = data?.[0]
 
       if (error) {
         const missingLogo =
@@ -283,7 +305,6 @@ export function SettingsForm() {
         return
       }
 
-      const saved = data?.[0]
       if (!saved) {
         console.log(error)
         setError(
@@ -294,7 +315,8 @@ export function SettingsForm() {
 
       setForm({
         hostelName: textValue(saved.hostel_name),
-        logoUrl: canSaveLogo ? textValue(saved.logo_url) : form.logoUrl,
+        logoUrl:
+          typeof saved.logo_url === "string" ? saved.logo_url : form.logoUrl,
         bankCode: normalizeBankCode(saved.bank_code),
         bankAccount: textValue(saved.bank_account).replace(/[^0-9]/g, ""),
         bankOwner: textValue(saved.bank_owner),
