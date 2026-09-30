@@ -353,17 +353,22 @@ export function SettingsForm() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Đơn giá mặc định</CardTitle>
-          <CardDescription>
+      <Card className="gap-0 overflow-hidden pt-0">
+        <CardHeader className="rounded-t-xl border-b bg-[#dfe7f5] px-6! py-4!">
+          <CardTitle className="text-slate-800">Đơn giá mặc định</CardTitle>
+          <CardDescription className="text-slate-700">
             Giá trị hiện tại của dòng cấu hình id = 1.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <form className="grid gap-4" onSubmit={handleSubmit}>
             <div className="grid gap-2">
-              <Label htmlFor="hostel-name">Tên nhà trọ</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="hostel-name"
+              >
+                Tên nhà trọ
+              </Label>
               <Input
                 id="hostel-name"
                 name="hostel_name"
@@ -380,7 +385,12 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="logo">Logo</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="logo"
+              >
+                Logo
+              </Label>
               {form.logoUrl ? (
                 <img
                   src={form.logoUrl}
@@ -436,7 +446,12 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="bank-code">Mã ngân hàng</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="bank-code"
+              >
+                Mã ngân hàng
+              </Label>
               <input type="hidden" name="bank_code" value={form.bankCode} />
               <Select
                 value={form.bankCode || undefined}
@@ -462,7 +477,12 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="bank-account">Số tài khoản</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="bank-account"
+              >
+                Số tài khoản
+              </Label>
               <Input
                 id="bank-account"
                 name="bank_account"
@@ -480,7 +500,12 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="bank-owner">Tên chủ tài khoản</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="bank-owner"
+              >
+                Tên chủ tài khoản
+              </Label>
               <Input
                 id="bank-owner"
                 name="bank_owner"
@@ -497,7 +522,12 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="electric-price">Giá điện (VNĐ/số)</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="electric-price"
+              >
+                Giá điện (VNĐ/số)
+              </Label>
               <Input
                 id="electric-price"
                 name="electric_price"
@@ -516,7 +546,12 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="water-price">Giá nước (VNĐ/khối)</Label>
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="water-price"
+              >
+                Giá nước (VNĐ/khối)
+              </Label>
               <Input
                 id="water-price"
                 name="water_price"
@@ -535,7 +570,10 @@ export function SettingsForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="service-price">
+              <Label
+                className="w-full rounded-md bg-[#eff4fc] px-4 py-2 text-slate-800"
+                htmlFor="service-price"
+              >
                 Phí dịch vụ mặc định (VNĐ/phòng)
               </Label>
               <Input
